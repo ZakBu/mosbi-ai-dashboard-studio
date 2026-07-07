@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.next/
+node_modules/
+test-results/
+playwright-report/
+output/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
