@@ -1,11 +1,12 @@
 import type { AiRunInfo } from "@/lib/ai/types";
 
-export type EditorSourceLibrary = "tremor";
+export type EditorSourceLibrary = "tremor" | "azs" | "executive";
 
 export type EditorComponentCategory =
   | "kpi"
   | "chart"
-  | "table";
+  | "table"
+  | "dashboard";
 
 export type EditorRect = {
   x: number;

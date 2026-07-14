@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { generateDashboardPlan } from "@/lib/ai/gateway";
 import { createDatasetProfile } from "@/lib/ai/datasetProfile";
+import { createExecutiveDashboardSource } from "@/lib/executive/compiler";
 import { parseCsv } from "@/lib/editor/csv";
 import { getCompactEditorComponentRegistry } from "@/lib/editor/componentRegistry";
 import { createEditorDocument } from "@/lib/editor/documentFactory";
@@ -23,27 +25,53 @@ export async function POST(req: NextRequest) {
     const parsed = parseCsv(csv);
     const datasetProfile = createDatasetProfile(parsed.records, parsed.columns);
     const provider = body.aiProvider ?? "demo";
-    const model = body.model || (provider === "ollama" ? "llama3.1" : provider === "openai" ? "gpt-4.1-mini" : "local-editor-planner");
+    const prompt = body.prompt ?? editorDefaultPrompt;
+    const planResult = await generateDashboardPlan({
+      prompt,
+      datasetProfile,
+      request: {
+        provider,
+        model: body.model,
+        ollamaBaseUrl: body.ollamaBaseUrl,
+      },
+    });
+
+    const source = createExecutiveDashboardSource({
+      plan: planResult.plan,
+      profile: datasetProfile,
+      records: parsed.records,
+    });
 
     const document = createEditorDocument({
-      prompt: body.prompt ?? editorDefaultPrompt,
+      prompt,
       seedComponentId: body.seedComponentId,
+      title: planResult.plan.title,
       columns: parsed.columns,
       rowCount: parsed.records.length,
       origin: req.nextUrl.origin,
-      ai: {
-        provider,
-        model,
-        mode: provider === "demo" ? "demo" : "planner",
-        warnings: provider === "demo" ? [] : ["Editor API is using registry-constrained JSON schema fallback for this MVP build."],
-        fallback: provider !== "demo",
-        usage: {
-          inputTokens: Math.round(JSON.stringify(datasetProfile).length / 4),
-          outputTokens: 900,
-          totalTokens: Math.round(JSON.stringify(datasetProfile).length / 4) + 900,
-        },
-      },
+      ai: planResult.ai,
     });
+
+    document.pages = document.pages.map((page) => ({
+      ...page,
+      widgets: [
+        {
+          id: "executive_dashboard_shell",
+          componentId: "executive.dashboard-shell",
+          sourceLibrary: "executive",
+          title: planResult.plan.title,
+          subtitle: planResult.plan.narrative[0],
+          layout: { x: 24, y: 92, w: 1232, h: 604 },
+          props: { source },
+          dataBinding: {
+            datasetId: "uploaded_csv",
+            columns: parsed.columns,
+            transform: "semantic-dashboard-compiler",
+          },
+          locked: true,
+        },
+      ],
+    }));
 
     saveEditorDocument(document);
 

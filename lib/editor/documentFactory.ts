@@ -43,86 +43,13 @@ export function createEditorDocument(input?: {
 
   const widgets: CanvasWidget[] = [
     widget({
-      id: "kpi_total",
-      componentId: "tremor.metric-card",
-      title: "Всего АЗС",
-      subtitle: "52 строки CSV",
-      layout: { x: 40, y: 96, w: 236, h: 146 },
-      props: { value: 13, delta: "+2.1%", progress: 100, tone: "blue" },
+      id: "azs_dashboard_shell",
+      componentId: "azs.dashboard-shell",
+      title: "АЗС Москвы",
+      subtitle: "Эталонный AZS dashboard shell",
+      layout: { x: 24, y: 92, w: 1232, h: 604 },
+      props: defaultPropsFor("azs.dashboard-shell"),
       locked: true,
-    }),
-    widget({
-      id: "kpi_available",
-      componentId: "tremor.metric-card",
-      title: "Доступно",
-      subtitle: "38,5% от общего числа",
-      layout: { x: 296, y: 96, w: 236, h: 146 },
-      props: { value: 5, delta: "-12.5%", progress: 38, tone: "green" },
-    }),
-    widget({
-      id: "kpi_no_fuel",
-      componentId: "tremor.metric-card",
-      title: "Нет топлива",
-      subtitle: "требует вмешательства",
-      layout: { x: 552, y: 96, w: 236, h: 146 },
-      props: { value: 7, delta: "+18.4%", progress: 54, tone: "red" },
-    }),
-    widget({
-      id: "trend_availability",
-      componentId: "tremor.line-chart",
-      title: "Динамика доступности топлива",
-      subtitle: "Tremor LineChart",
-      layout: { x: 40, y: 266, w: 712, h: 270 },
-      props: { data: trendData, index: "date", categories: ["Открыто", "Нет топлива", "Иные причины"], colors: ["emerald", "rose", "violet"] },
-    }),
-    widget({
-      id: "queue_by_company",
-      componentId: "tremor.bar-chart",
-      title: "Очереди по сетям",
-      subtitle: "Tremor BarChart",
-      layout: { x: 776, y: 96, w: 420, h: 250 },
-      props: { data: queueData, index: "company", categories: ["Очередь"], colors: ["amber"] },
-    }),
-    widget({
-      id: "status_mix",
-      componentId: "tremor.donut-chart",
-      title: "Статус АЗС",
-      subtitle: "Tremor DonutChart",
-      layout: { x: 776, y: 368, w: 420, h: 250 },
-      props: { data: donutData, category: "value", index: "name", colors: ["emerald", "rose", "violet"] },
-    }),
-    widget({
-      id: "problem_table",
-      componentId: "tremor.table",
-      title: "Проблемные объекты",
-      subtitle: "Tremor Table",
-      layout: { x: 40, y: 558, w: 520, h: 230 },
-      props: { rows: exceptionRows, columns: ["station", "company", "district", "status", "queue", "risk"] },
-    }),
-    widget({
-      id: "ai_summary",
-      componentId: "tremor.tracker",
-      title: "Управленческий вывод",
-      subtitle: "Tremor Tracker",
-      layout: { x: 584, y: 640, w: 612, h: 190 },
-      props: {
-        data: [
-          { color: "emerald", tooltip: "Доступно" },
-          { color: "yellow", tooltip: "Очереди растут" },
-          { color: "rose", tooltip: "Нет топлива" },
-          { color: "violet", tooltip: "Иные причины" },
-          { color: "emerald", tooltip: "Стабилизация" },
-          { color: "rose", tooltip: "Критичный объект" },
-        ],
-      },
-    }),
-    widget({
-      id: "ai_actions",
-      componentId: "tremor.category-bar",
-      title: "Порог риска",
-      subtitle: "Tremor CategoryBar",
-      layout: { x: 584, y: 558, w: 612, h: 72 },
-      props: { values: [25, 35, 25, 15], colors: ["emerald", "yellow", "orange", "rose"], markerValue: 78 },
     }),
   ];
 
@@ -165,6 +92,9 @@ export function createEditorDocument(input?: {
 }
 
 export function defaultPropsFor(componentId: string): Record<string, unknown> {
+  if (componentId === "azs.dashboard-shell") return { initialView: "dashboard" };
+  if (componentId === "executive.dashboard-shell") return {};
+
   const monthlyData = [
     { date: "Jan 23", Organic: 232, Sponsored: 0, Direct: 164 },
     { date: "Feb 23", Organic: 241, Sponsored: 0, Direct: 188 },

@@ -3,10 +3,11 @@ import type { DashboardDocument } from "@/lib/editor/types";
 
 export function EditorEmbedRenderer({ document }: { document: DashboardDocument }) {
   const page = document.pages[0];
+  const hasDashboardShell = page.widgets.some((widget) => widget.componentId.endsWith(".dashboard-shell"));
 
   return (
     <main className="editor-embed">
-      <section className="editor-sheet editor-sheet--embed" style={{ width: page.width, height: page.height }}>
+      <section className={`editor-sheet editor-sheet--embed${hasDashboardShell ? " editor-sheet--embed-shell" : ""}`} style={{ width: page.width, height: page.height }}>
         <header className="editor-sheet__title">
           <div>
             <span>mos.bi / published dashboard</span>

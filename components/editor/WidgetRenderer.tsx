@@ -30,6 +30,9 @@ import {
   Title,
   Tracker,
 } from "@tremor/react";
+import { AzsDashboardWidget } from "@/components/azs/AzsDashboardWidget";
+import { ExecutiveDashboardWidget } from "@/components/executive/ExecutiveDashboardWidget";
+import type { ExecutiveDashboardSource } from "@/lib/executive/types";
 import type { CanvasWidget } from "@/lib/editor/types";
 
 function asArray<T>(value: unknown): T[] {
@@ -42,6 +45,14 @@ function asStringArray(value: unknown): string[] {
 
 export function WidgetRenderer({ widget }: { widget: CanvasWidget }) {
   const props = widget.props;
+
+  if (widget.componentId === "azs.dashboard-shell") {
+    return <AzsDashboardWidget data={props.data} initialView={props.initialView === "fuel" || props.initialView === "prices" || props.initialView === "reports" ? props.initialView : "dashboard"} />;
+  }
+
+  if (widget.componentId === "executive.dashboard-shell") {
+    return <ExecutiveDashboardWidget source={props.source as ExecutiveDashboardSource | undefined} />;
+  }
 
   if (widget.componentId === "tremor.metric-card") {
     const tone = String(props.tone ?? "blue");

@@ -414,6 +414,8 @@ export function EditorShell() {
           <button type="button" onClick={() => setDocument((current) => addWidget(current, "tremor.line-chart"))}><IconChartBar size={18} /> Chart</button>
           <button type="button" onClick={() => setDocument((current) => addWidget(current, "tremor.table"))}><IconTable size={18} /> Table</button>
           <button type="button" onClick={() => setDocument((current) => addWidget(current, "tremor.area-chart"))}><IconLayoutDashboard size={18} /> Area</button>
+          <button type="button" onClick={() => setDocument((current) => addWidget(current, "azs.dashboard-shell"))}><IconLayoutDashboard size={18} /> AZS</button>
+          <button type="button" onClick={() => setDocument((current) => addWidget(current, "executive.dashboard-shell"))}><IconLayoutDashboard size={18} /> CSV Shell</button>
           <button type="button" className="editor-bottom-toolbar__build" onClick={buildWithAi}><IconDeviceFloppy size={18} /> Build</button>
         </div>
       </nav>
